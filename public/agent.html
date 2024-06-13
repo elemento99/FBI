@@ -13,7 +13,7 @@
 <body>
     <h3 id="email">Email </h3>
     <h3 id="token">Token </h3>
-    <button id="restricted-boton" class="btn ">Restricted</button>
+    <button id="restricted-boton" class="btn btn-danger ">Restricted</button>
 
     <script
     src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"
@@ -42,16 +42,35 @@ console.log(config)
         tokenText.textContent = `Token: ${token.slice(0, 50)}...`;
         
         restrictedButton.addEventListener('click', async () => {
-            try {
-                const response = await axios.get('/protected', config);
+    try {
+        // Obtener el token almacenado en el localStorage
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+            throw new Error('Token no encontrado');
+        }
 
-                console.log(response.data)
-            
-            } catch (error) {
-                console.error(error);
-                alert('No se pudo ingresar!');
+        // Configuración de axios con el token
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`
             }
-        });
+        };
+
+        // Hacer la solicitud a la ruta protegida
+        const response = await axios.get('/protected', config);
+
+        if (response.status === 200) {
+            // Redirigir al usuario a la ruta protegida
+            window.location.href = '/protected';
+        } else {
+            throw new Error('No autorizado');
+        }
+    } catch (error) {
+        console.error(error);
+        alert('No se pudo ingresar!');
+    }
+});
     </script>
 </body>
 </html>

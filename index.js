@@ -26,10 +26,12 @@ app.get('/agent', (req, res) => {
     res.sendFile(__dirname + '/public/agent.html');
 });
 
-app.get('/protected', verifyTokenJWT, (req, res) => {
+app.get('/protecte-verification', verifyTokenJWT, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', '/protected.html'))
 })
-
+app.get('/protected', (req, res) => {
+    res.status(200).json({ message: 'Acceso concedido', user: req.user });
+});
 
 app.use('*', (_, res) => {
     res.status(404).json({ ok: false, msg: 'ruta no configurada 😐' })
