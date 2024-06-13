@@ -44,8 +44,9 @@ console.log(config)
         restrictedButton.addEventListener('click', async () => {
             try {
                 const response = await axios.get('/protected', config);
-                window.location.href = "/protected";
-                console.log(response.data);
+
+                console.log(response.data)
+            
             } catch (error) {
                 console.error(error);
                 alert('No se pudo ingresar!');
