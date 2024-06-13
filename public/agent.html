@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente Autenticado!</title>
+
+    <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  />
+</head>
+<body>
+    <h3 id="email">Email </h3>
+    <h3 id="token">Token </h3>
+    <button id="restricted-boton" class="btn ">Restricted</button>
+
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"
+    integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    ></script>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if(!token){
+            window.location.href = '/';
+        }
+        console.log(token)
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+console.log(config)
+        const emailText = document.querySelector('#email');
+        const tokenText = document.querySelector('#token');
+        const restrictedButton = document.querySelector('#restricted-boton');
+
+        emailText.textContent = `Email: ${localStorage.getItem('email')}`;
+        tokenText.textContent = `Token: ${token.slice(0, 50)}...`;
+        
+        restrictedButton.addEventListener('click', async () => {
+            try {
+                const response = await axios.get('/protected', config);
+                window.location.href = "/protected";
+                console.log(response.data);
+            } catch (error) {
+                console.error(error);
+                alert('No se pudo ingresar!');
+            }
+        });
+    </script>
+</body>
+</html>

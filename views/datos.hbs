@@ -1,0 +1,134 @@
+<div class="py-5">
+  <h2>Iniciar Sesión</h2>
+  <hr class="w-50" />
+  <form id="actualizar">
+    <div class="form-group">
+      <label>Email</label>
+      <input name="email" id="email" type="email" class="form-control m-auto" readonly />
+    </div>
+    <div class="form-group">
+      <label>Nombre</label>
+      <input name="nombre" class="form-control m-auto" id="nombre" value="" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input name="password" type="password" class="form-control m-auto" value="" />
+    </div>
+    <div class="form-group">
+      <label>Repita la password</label>
+      <input name="password2" type="password" class="form-control m-auto" value="" />
+    </div>
+    <div class="form-group">
+      <label>Años de experiencia</label>
+      <input name="anos_experiencia" id="anos_experiencia" class="form-control m-auto" value="" />
+    </div>
+    <div class="form-group">
+      <label>Especialidad</label>
+      <input name="especialidad" id="especialidad" class="form-control m-auto" value="" />
+    </div>
+    
+
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+  </form>
+<div>
+  <button id="eliminarCuentaBtn" class="btn btn-danger">Eliminar cuenta</button>
+</div>
+</div>
+
+<script>
+  const token = localStorage.getItem('token')
+  if (!token) {
+    window.location.href = "/login"
+  }
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const id = localStorage.getItem('id')
+  const actualizarForm = document.getElementById('actualizar');
+  const email = localStorage.getItem('email');
+  const nombre = localStorage.getItem('nombre');
+  const anos_experiencia = localStorage.getItem('anos_experiencia');
+  const especialidad = localStorage.getItem('especialidad');
+
+  document.getElementById('email').value = email;
+  document.getElementById('nombre').value = nombre;
+  document.getElementById('anos_experiencia').value = anos_experiencia;
+  document.getElementById('especialidad').value = especialidad;
+
+
+  actualizarForm.addEventListener('submit', async (e) => {
+    try {
+      e.preventDefault();
+
+      const email = e.target.email.value;
+      const nombre = e.target.nombre.value;
+      const password = e.target.password.value;
+      const password2 = e.target.password2.value;
+      const anos_experiencia = e.target.anos_experiencia.value;
+      const especialidad = e.target.especialidad.value;
+
+
+
+      if (password !== password2) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+      const response = await axios.put(`/users/${id}`, {
+        email,
+        nombre,
+        password,
+        anos_experiencia,
+        especialidad,
+
+
+      },config);
+
+      console.log(response);
+
+
+
+;
+      alert('Usuario actualizado... redirigiendo al dashboard');
+      window.location.href = "/";
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.data && error.response.data.msg) {
+        alert(error.response.data.msg);
+      } else {
+        alert('Ocurrió un error al procesar la solicitud.');
+      }
+    }
+  })
+
+
+const eliminarCuentaBtn = document.getElementById('eliminarCuentaBtn');
+
+  eliminarCuentaBtn.addEventListener('click', async () => {
+    try {
+      const confirmed = confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.');
+
+      if (!confirmed) {
+        return;
+      }
+
+      const response = await axios.delete(`/users/${id}`, config);
+
+      console.log(response);
+
+      alert('Cuenta eliminada correctamente.');
+      window.location.href = "/login"; // Redirige a la página de inicio de sesión después de eliminar la cuenta
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.data && error.response.data.msg) {
+        alert(error.response.data.msg);
+      } else {
+        alert('Ocurrió un error al procesar la solicitud.');
+      }
+    }
+  });
+
+
+</script>
